@@ -234,7 +234,7 @@ class WakeWordService : Service() {
 
     private suspend fun transcribeAndSubmit(preroll: ShortArray, wakeAt: Long) {
         val app = application as MikaApp
-        if (app.voice.spec() !is SpeechEngineSpec.Provider && app.voice.spec() !is SpeechEngineSpec.Doubao) {
+        if (!app.voice.spec().takesPreroll) {
             Log.i(TAG, "Cloud speech recognition is not configured")
             notifyState(getString(R.string.wake_need_cloud), VoiceStatusOverlay.Phase.Error)
             delay(3000)

@@ -21,6 +21,17 @@ sealed interface SpeechEngineSpec {
     enum class Why { Off, NoSystemNoModel, SystemGone, SystemNoResponse, ProviderGone, DoubaoNotConfigured }
 }
 
+/**
+ * 这个引擎能不能接上开始前已经录好的声音(唤醒词前后那几秒,见 [VoiceInput.startWithPreroll]):
+ * 自己用 [PcmRecorder] 录音的能,手机自带识别自己开麦克风、接不上。
+ * 不写 else:以后加的引擎必须在这里表态,不会被唤醒那边悄悄拒掉。
+ */
+val SpeechEngineSpec.takesPreroll: Boolean
+    get() = when (this) {
+        is SpeechEngineSpec.Provider, is SpeechEngineSpec.Doubao -> true
+        is SpeechEngineSpec.System, is SpeechEngineSpec.Unavailable -> false
+    }
+
 /** 把用户的选择、手机能力和现有服务商对起来,得出这次用哪个引擎。纯函数,不碰系统。 */
 object SpeechResolver {
     fun resolve(choice: SpeechChoice, system: SystemCapability, providers: List<Provider>): SpeechEngineSpec = when (choice) {

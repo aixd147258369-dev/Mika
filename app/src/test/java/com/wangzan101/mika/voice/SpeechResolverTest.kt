@@ -62,4 +62,11 @@ class SpeechResolverTest {
             SpeechResolver.resolve(SpeechChoice.Off, SystemCapability(true, true), listOf(p1)),
         )
     }
+
+    @Test fun onlyEnginesThatRecordThemselvesTakePreroll() {
+        assertEquals(true, SpeechEngineSpec.Provider(p1, "whisper-1", TranscribeMethod.AudioTranscriptions).takesPreroll)
+        assertEquals(true, SpeechEngineSpec.Doubao(DoubaoProtocol.resources.first()).takesPreroll)
+        assertEquals(false, SpeechEngineSpec.System(onDevice = true).takesPreroll)
+        assertEquals(false, SpeechEngineSpec.Unavailable(SpeechEngineSpec.Why.Off).takesPreroll)
+    }
 }
